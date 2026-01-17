@@ -1,0 +1,119 @@
+# =============================================================================
+# Python Dependencies for Protoknox RAG Prototype
+# =============================================================================
+# Install: pip install -r requirements.txt
+# Upgrade: pip install --upgrade -r requirements.txt
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core RAG Framework (choose one - currently LangChain)
+# -----------------------------------------------------------------------------
+langchain==0.3.0
+langchain-community==0.3.0
+langchain-core==0.3.0
+
+# Alternative: LlamaIndex
+# llama-index==0.11.0
+# llama-index-core==0.11.0
+
+# -----------------------------------------------------------------------------
+# Vector Database Clients
+# -----------------------------------------------------------------------------
+chromadb==0.5.23              # Local vector database (simple, good for prototyping)
+# qdrant-client==1.11.0       # Alternative: Qdrant (production-ready)
+# pinecone-client==5.0.0      # Alternative: Pinecone (managed cloud)
+# weaviate-client==4.7.0      # Alternative: Weaviate
+
+# -----------------------------------------------------------------------------
+# Embedding Models
+# -----------------------------------------------------------------------------
+# OpenAI (requires API key)
+openai==1.54.0
+
+# Local/Open-Source alternatives
+sentence-transformers==3.2.0  # For local embeddings (all-MiniLM, etc.)
+# huggingface-hub==0.26.0     # For downloading models from HuggingFace
+
+# -----------------------------------------------------------------------------
+# LLM Integration
+# -----------------------------------------------------------------------------
+# OpenAI is already above
+anthropic==0.39.0             # Claude API (Anthropic)
+# cohere==5.11.0              # Cohere API
+
+# -----------------------------------------------------------------------------
+# Document Processing & Loading
+# -----------------------------------------------------------------------------
+pypdf==5.1.0                  # PDF parsing
+python-docx==1.1.2            # Word documents
+python-pptx==1.0.2            # PowerPoint
+markdown==3.7                 # Markdown files
+beautifulsoup4==4.12.3        # HTML parsing
+lxml==5.3.0                   # XML/HTML processing
+
+# Text splitting
+tiktoken==0.8.0               # OpenAI tokenizer (for chunking)
+
+# -----------------------------------------------------------------------------
+# Data & ML Utilities
+# -----------------------------------------------------------------------------
+numpy==1.26.4              # LangChain 0.3.0 requires numpy < 2.0
+pandas==2.2.3
+scipy==1.14.1
+
+# -----------------------------------------------------------------------------
+# Web & API (for future web interface)
+# -----------------------------------------------------------------------------
+fastapi==0.115.5              # Modern API framework
+uvicorn[standard]==0.32.1     # ASGI server
+pydantic==2.10.2              # Data validation
+python-multipart==0.0.18      # File uploads
+
+# Alternative: Flask
+# flask==3.0.0
+# flask-cors==5.0.0
+
+# -----------------------------------------------------------------------------
+# Environment & Configuration
+# -----------------------------------------------------------------------------
+python-dotenv==1.0.1          # Load .env files
+pyyaml==6.0.2                 # YAML config files
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+pytest==8.3.4                 # Testing framework
+pytest-asyncio==0.24.0        # Async tests
+pytest-cov==6.0.0             # Coverage reports
+pytest-mock==3.14.0           # Mocking
+
+# -----------------------------------------------------------------------------
+# Code Quality
+# -----------------------------------------------------------------------------
+black==24.10.0                # Code formatter
+ruff==0.8.3                   # Fast linter (replaces flake8, isort, etc.)
+mypy==1.13.0                  # Type checking
+
+# -----------------------------------------------------------------------------
+# Utilities
+# -----------------------------------------------------------------------------
+tenacity==8.5.0               # Retry logic (LangChain requires <9.0.0, !=8.4.0)
+tqdm==4.67.1                  # Progress bars
+requests==2.32.3              # HTTP requests
+aiohttp==3.11.10              # Async HTTP
+loguru==0.7.3                 # Better logging
+
+# -----------------------------------------------------------------------------
+# Jupyter (optional - for experimentation)
+# -----------------------------------------------------------------------------
+# jupyter==1.1.0
+# ipykernel==6.29.0
+# notebook==7.3.0
+
+# =============================================================================
+# Notes:
+# - Versions are pinned for reproducibility
+# - Uncomment packages as needed for your chosen tech stack
+# - Update versions regularly: pip-compile or pip list --outdated
+# - For production, consider using pip-tools for dependency management
+# =============================================================================

@@ -1,0 +1,207 @@
+# =============================================================================
+# Docker Compose Configuration for Protoknox RAG Prototype
+# =============================================================================
+# Usage:
+#   Start all services:     docker compose up -d
+#   View logs:              docker compose logs -f
+#   Stop all services:      docker compose down
+#   Rebuild containers:     docker compose up -d --build
+#   Enter app container:    docker compose exec app bash
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # App Service - Main Python RAG application
+  # ---------------------------------------------------------------------------
+  app:
+    # Build configuration
+    build:
+      context: .                    # Build from current directory
+      dockerfile: Dockerfile        # Use our Dockerfile
+      target: development          # Use development stage (has tests/)
+
+    # Container name (easier to reference)
+    container_name: protoknox-app
+
+    # Restart policy (always restart if container stops)
+    restart: unless-stopped
+
+    # Environment variables
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ENVIRONMENT=development
+      # Vector DB connection (will connect to chromadb service)
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+
+    # Port mapping (host:container)
+    # If app has web interface, access via http://localhost:8080
+    ports:
+      - "8080:8000"
+
+    # Volume mounts (sync between host and container)
+    # Changes on host are immediately visible in container
+    volumes:
+      # Source code (live reload during development)
+      - ./src:/app/src:rw
+      - ./tests:/app/tests:rw
+
+      # Data directories
+      - ./data/raw:/app/data/raw:rw
+      - ./data/processed:/app/data/processed:rw
+
+      # Logs
+      - ./logs:/app/logs:rw
+
+      # Environment file (if exists)
+      - ./.env:/app/.env:ro
+
+    # Depends on other services (starts chromadb first)
+    depends_on:
+      chromadb:
+        condition: service_healthy
+
+    # Networks
+    networks:
+      - protoknox-network
+
+    # Keep container running (override CMD from Dockerfile)
+    # For development, we often want to run commands manually
+    command: tail -f /dev/null
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "print('healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # ChromaDB Service - Vector database for embeddings
+  # ---------------------------------------------------------------------------
+  chromadb:
+    # Use official Chroma image
+    image: chromadb/chroma:latest
+
+    # Container name
+    container_name: protoknox-chromadb
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Environment variables for ChromaDB
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - ALLOW_RESET=true
+      - IS_PERSISTENT=true
+
+    # Port mapping
+    # Access ChromaDB UI/API at http://localhost:8001
+    ports:
+      - "8001:8000"
+
+    # Persistent storage for ChromaDB data
+    volumes:
+      - chromadb-data:/chroma/chroma
+
+    # Networks
+    networks:
+      - protoknox-network
+
+    # Health check (uses bash's /dev/tcp since curl is not available in the image)
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # Future Services (currently commented out)
+  # ---------------------------------------------------------------------------
+
+  # # Qdrant - Alternative vector database (more production-ready)
+  # qdrant:
+  #   image: qdrant/qdrant:latest
+  #   container_name: protoknox-qdrant
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6333:6333"  # REST API
+  #     - "6334:6334"  # gRPC
+  #   volumes:
+  #     - qdrant-data:/qdrant/storage
+  #   networks:
+  #     - protoknox-network
+
+  # # Jupyter Notebook - For experimentation and exploration
+  # jupyter:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   container_name: protoknox-jupyter
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ./notebooks:/app/notebooks:rw
+  #     - ./src:/app/src:rw
+  #     - ./data:/app/data:rw
+  #   command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+  #   networks:
+  #     - protoknox-network
+
+# =============================================================================
+# Networks - Allows containers to communicate
+# =============================================================================
+networks:
+  protoknox-network:
+    driver: bridge
+    name: protoknox-network
+
+# =============================================================================
+# Volumes - Persistent storage for container data
+# =============================================================================
+volumes:
+  chromadb-data:
+    driver: local
+    name: protoknox-chromadb-data
+
+  # # If using Qdrant
+  # qdrant-data:
+  #   driver: local
+  #   name: protoknox-qdrant-data
+
+# =============================================================================
+# Quick Reference Commands:
+#
+# Start all services:
+#   docker compose up -d
+#
+# View logs (all services):
+#   docker compose logs -f
+#
+# View logs (specific service):
+#   docker compose logs -f app
+#
+# Stop all services:
+#   docker compose down
+#
+# Stop and remove volumes (WARNING: deletes all data):
+#   docker compose down -v
+#
+# Rebuild containers:
+#   docker compose up -d --build
+#
+# Execute command in running container:
+#   docker compose exec app python src/main.py
+#   docker compose exec app bash
+#
+# Check service status:
+#   docker compose ps
+#
+# Restart a specific service:
+#   docker compose restart app
+# =============================================================================
