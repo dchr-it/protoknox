@@ -2,7 +2,7 @@
 
 **Projekt:** Protoknox RAG-Prototyp
 **Erstellt:** 2026-01-17
-**Version:** 1.1
+**Version:** 1.2
 
 ---
 
@@ -317,6 +317,67 @@ docker-compose up -d --build
 - ✅ Ich erkläre was in Containern passiert
 - ✅ Ich zeige Best Practices für Python+Docker
 
+### 5.7 Session-Start-Routine mit Docker
+
+**User-Präferenz:**
+- ❌ **KEIN Auto-Start** für Docker Desktop (User startet manuell)
+- ✅ Claude erinnert User, Docker zu starten, falls erforderlich
+
+**Mein Workflow zu Beginn jeder Session:**
+
+1. **Docker-Status prüfen**:
+   ```bash
+   docker ps
+   ```
+   - ✅ Erfolgreich → Docker läuft, weiter mit Schritt 2
+   - ❌ Fehler → **User erinnern**: "⚠️ Bitte starte Docker Desktop, bevor wir fortfahren."
+
+2. **Container-Status prüfen**:
+   ```bash
+   docker compose ps
+   ```
+   - Container laufen → ✅ Bereit zum Arbeiten
+   - Container gestoppt → Weiter mit Schritt 3
+
+3. **Container starten**:
+   ```bash
+   docker compose up -d
+   ```
+   - **`docker compose up`**: Startet alle Services aus docker-compose.yml
+   - **`-d`** (detached): Container laufen im Hintergrund → Terminal bleibt frei
+   - Alternative ohne `-d`: Logs werden angezeigt, Terminal blockiert
+
+4. **Bereitschaft bestätigen**:
+   ```bash
+   docker compose ps
+   ```
+   Beide Container sollten "healthy" sein
+
+**Session-Ende-Routine:**
+
+Am Ende der Arbeitssession:
+```bash
+docker compose down
+```
+- Stoppt alle Container
+- Entfernt Container (aber NICHT die Daten in Volumes)
+- Spart Ressourcen (RAM/CPU) wenn nicht gearbeitet wird
+
+**Erklärung der wichtigsten Befehle:**
+
+| Befehl | Was passiert | Wann verwenden |
+|--------|-------------|----------------|
+| `docker compose up -d` | Startet Container im Hintergrund | Zu Beginn der Session |
+| `docker compose down` | Stoppt und entfernt Container | Am Ende der Session |
+| `docker compose ps` | Zeigt Container-Status | Status prüfen |
+| `docker compose logs -f app` | Live-Logs anzeigen | Debugging, Fehlersuche |
+| `docker compose exec app bash` | Shell im Container öffnen | Debugging, Befehle im Container |
+| `docker compose up -d --build` | Neu bauen + starten | Nach Änderungen an Dockerfile/requirements.txt |
+
+**Wichtig:**
+- 🔄 **Code-Änderungen**: KEIN Neustart nötig (Live-Reloading via Volume-Mounts)
+- 📦 **Dependency-Änderungen** (requirements.txt): `docker compose up -d --build` erforderlich
+
 ---
 
 ## 6. Projekt-Organisation
@@ -469,6 +530,13 @@ Für nicht-triviale Implementierungen:
 ---
 
 ## Änderungshistorie
+
+**v1.2 - 2026-01-17**
+- Docker Session-Start-Routine hinzugefügt (Abschnitt 5.7)
+- Erklärung wichtiger Docker-Befehle (docker compose up -d, etc.)
+- User-Präferenz dokumentiert: KEIN Auto-Start für Docker Desktop
+- Claude erinnert User, Docker zu starten falls erforderlich
+- Session-Ende-Routine für Container-Shutdown
 
 **v1.1 - 2026-01-17**
 - Git Push-Strategie hinzugefügt (Abschnitt 4.6)
