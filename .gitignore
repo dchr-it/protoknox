@@ -1,0 +1,140 @@
+# === Python ===
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# === Secrets & Environment ===
+# NEVER commit these!
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.json
+credentials.json
+config.local.*
+
+# === RAG-specific ===
+# Vector databases (can be large)
+*.db
+*.sqlite
+*.sqlite3
+chroma_db/
+qdrant_storage/
+faiss_index/
+
+# Embeddings (can be very large)
+embeddings/
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Downloaded models
+models/
+*.bin
+*.safetensors
+*.gguf
+
+# Processed data (can be regenerated)
+data/processed/*
+!data/processed/.gitkeep
+
+# Raw data (potentially sensitive or large)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/sample_*.txt
+!data/raw/README.md
+
+# === Docker ===
+# Docker volumes
+docker/volumes/
+
+# === Logs & Temp ===
+*.log
+logs/
+tmp/
+temp/
+
+# === OS ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# === Other ===
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Large files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Session artifacts (optional - you may want to commit session logs)
+# session_logs/
+
+# === Keep empty directories ===
+# Git doesn't track empty directories, so we use .gitkeep files
+# These will be committed
+!.gitkeep
