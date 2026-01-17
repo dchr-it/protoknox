@@ -2,7 +2,7 @@
 
 **Projekt:** Protoknox RAG-Prototyp
 **Erstellt:** 2026-01-17
-**Version:** 1.0
+**Version:** 1.1
 
 ---
 
@@ -201,6 +201,65 @@ git commit -m "chore: update dependencies in requirements.txt"
 - ✅ Ich erstelle die .gitignore
 - ✅ Ich weise auf sensible Dateien hin
 - ✅ Ich erkläre jeden Git-Befehl bevor ich ihn ausführe
+
+### 4.6 Push-Strategie (wann zu GitHub pushen)
+
+**SSH-Konfiguration:**
+- ✅ SSH-Key eingerichtet (ed25519)
+- ✅ Remote-URL: `git@github.com:dchr-it/protoknox.git`
+- ✅ Automatische Authentifizierung (kein Token nötig)
+
+**Automatischer Push - Claude pushed IMMER in diesen Fällen:**
+
+✅ **PUSH erfolgt automatisch:**
+1. **Nach Abschluss eines Tasks** - Wenn ein Task in der Todo-Liste als "completed" markiert wird
+2. **Vor Session Log Erstellung** - Bei 90% Token-Limit oder natürlichem Session-Ende
+3. **Nach wichtigen Dokumentations-Updates** - Änderungen an RAG_PLANUNG.md, README.md
+4. **Nach Meilensteinen** - Feature komplett, Prototyp funktioniert, Tests bestanden
+5. **Vor größeren Arbeitsunterbrechungen** - Sicherung der Arbeit
+
+❌ **KEIN Push bei:**
+1. **Broken State** - Code kompiliert nicht / Tests schlagen fehl
+2. **Work in Progress** - Mitten im Refactoring, experimenteller Code
+3. **Unvollständige Features** - Feature nur teilweise implementiert
+4. **Jeden einzelnen Commit** - Zu granular, mehrere Commits werden zu logischer Einheit gebündelt
+
+⚠️ **Push nach Rückfrage:**
+1. **Experimenteller Code** - Claude fragt: "Experimentellen Code pushen?"
+2. **Größere Refactorings (unvollständig)** - Claude fragt: "Unvollständiges Refactoring pushen?"
+3. **Architektur-Änderungen** - Claude fragt, wenn unklar ob komplett
+
+**Workflow-Beispiel:**
+```bash
+# Claude arbeitet an mehreren Tasks
+git add .
+git commit -m "feat: implement document ingestion"
+# (noch kein push - Task geht weiter)
+
+git add .
+git commit -m "test: add tests for document ingestion"
+# (noch kein push - Task nicht komplett)
+
+git add .
+git commit -m "docs: update RAG_PLANUNG.md with ingestion strategy"
+# ✅ JETZT PUSH - Task abgeschlossen, Dokumentation aktualisiert
+git push
+```
+
+**Session-Ende Workflow:**
+```bash
+# Bei 90% Token oder Session-Ende:
+1. Aktuellen Task-Stand committen (auch wenn incomplete)
+2. Session Log erstellen
+3. Alles pushen
+4. User informieren
+```
+
+**Best Practice - "Push early, push often" (aber nicht zu oft):**
+- Mindestens 1x pro Session
+- Nach jedem abgeschlossenen Feature/Bugfix
+- Funktionierende Code-Stände teilen
+- Backup auf GitHub sicherstellen
 
 ---
 
@@ -410,6 +469,12 @@ Für nicht-triviale Implementierungen:
 ---
 
 ## Änderungshistorie
+
+**v1.1 - 2026-01-17**
+- Git Push-Strategie hinzugefügt (Abschnitt 4.6)
+- SSH-Konfiguration dokumentiert
+- Klare Regeln wann automatisch gepusht wird
+- Workflow-Beispiele für Push-Timing
 
 **v1.0 - 2026-01-17**
 - Initiale Version
